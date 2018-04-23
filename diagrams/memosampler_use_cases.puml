@@ -1,0 +1,52 @@
+Deutsch:
+@startuml
+    left to right direction
+    actor User
+    node mosaik
+    rectangle sampling {
+        (Modell spezifizieren) as (UC1)
+        (Strategie wählen) as (UC2)
+        (Experiment durchführen) as (UC3)
+
+        (Simulator erzeugen) as (UC4)
+        (Modell erzeugen) as (UC5)
+        (InputProvider erzeugen) as (UC6)
+        (Collector erzeugen) as (UC7)
+
+        User -> (UC1)
+        User -> (UC2)
+        User -> (UC3)
+        (UC3) <- mosaik
+        (UC4) <. (UC3): includes
+        (UC5) <. (UC3): includes
+        (UC6) <. (UC3): includes
+        (UC7) <. (UC3): includes
+    }
+@enduml
+
+English:
+@startuml
+    left to right direction
+    actor User
+    node mosaik
+    rectangle sampling {
+        (specifiy sim model) as (UC1)
+        (choose strategy) as (UC2)
+        (perform experiment) as (UC3)
+
+        (create simulator) as (UC4)
+        (create sim model) as (UC5)
+        (create input provider) as (UC6)
+        (create collector) as (UC7)
+
+        User -> (UC1)
+        User -> (UC2)
+        User -> (UC3)
+        (UC3) <- mosaik
+        (UC4) <. (UC3): includes
+        (UC5) <. (UC3): includes
+        (UC6) <. (UC3): includes
+        (UC7) <. (UC3): includes
+    }
+@enduml
+

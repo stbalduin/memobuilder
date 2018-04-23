@@ -1,0 +1,96 @@
+---
+
+########################################################################################################################
+# SIMULATOR CONFIGURATION
+########################################################################################################################
+
+simulator_configuration:
+  - &SIM_CONFIG !SimConfig
+    arguments:
+    - !KeyValuePair {key: python, value: 'memosampler.simulators:TestSimulator'}
+
+
+########################################################################################################################
+# MODEL STRUCTURE CONFIGURATION
+########################################################################################################################
+
+model_structure_configuration:
+  - &MODEL_STRUCT !ModelStructure
+    model_inputs: [in]
+    model_outputs: [out]
+    model_parameters: [a, b]
+    simulator_parameters: [step_size]
+    virtual_states: []
+
+
+########################################################################################################################
+# PARAMETER VARIATION
+########################################################################################################################
+
+parameter_variation:
+  ### CONSTANT PARAMETERS
+  - &CONSTANT_STEP_SIZE !ParameterVariation
+    parameter_name: step_size
+    variation_mode: constant
+    variation_arguments:
+    - !KeyValuePair {key: value, value: 900}
+  - &CONSTANT_A !ParameterVariation
+    parameter_name: a
+    variation_mode: constant
+    variation_arguments:
+    - !KeyValuePair {key: value, value: 2.0}
+  - &CONSTANT_B !ParameterVariation
+    parameter_name: b
+    variation_mode: constant
+    variation_arguments:
+    - !KeyValuePair {key: value, value: 3.0}
+  ### VARIATED PARAMETERS
+  - &REAL_RANGE_INPUT !ParameterVariation
+    parameter_name: in
+    variation_mode: numerical_levels
+    variation_arguments:
+    - !KeyValuePair {key: levels, value: [-100, 100]}
+    #variation_arguments:
+    #- !KeyValuePair {key: min, value: -100}
+    #- !KeyValuePair {key: max, value: 100}
+
+
+########################################################################################################################
+# SAMPLER CONFIGURATION
+########################################################################################################################
+
+sampler_strategy:
+  - &FULLFACT !StrategyConfig
+      arguments: []
+      name: FullFactorial
+
+sampler_configuration:
+  - &TESTMODEL_FULLFACT !SamplerConfig
+      name: TESTMODEL_FULLFACT
+      sim_config: *SIM_CONFIG
+      model_structure: *MODEL_STRUCT
+      strategy: *FULLFACT
+      parameter_variations:
+        - *CONSTANT_STEP_SIZE
+        - *CONSTANT_A
+        - *CONSTANT_B
+        - *REAL_RANGE_INPUT
+
+
+########################################################################################################################
+# TRAINER CONFIGURATION
+########################################################################################################################
+
+#trainer_configuration:
+#  - !SurrogateModelConfig
+#    approximation_functions:
+#    - !ApproximationFunction
+#      inputs: [P_el_set, SoC]
+#      model_arguments: []
+#      model_type: Kriging
+#      outputs: [P_el, SoC]
+#      trainer_options: []
+#    name: mySurrogateModel
+#    sampler_configuration: *BATTERY_LHS1000
+
+...

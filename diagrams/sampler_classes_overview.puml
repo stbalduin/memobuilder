@@ -1,0 +1,58 @@
+@startuml
+
+    class memosampler.sampler.Sampler {
+        + sampling_model
+        + sampling_strategy
+        + sampling_scenario
+        + run()
+    }
+
+    abstract class memosampler.sampler.SamplingStrategy{
+        + create_design():
+        + decode_design():
+    }
+
+    class memosampler.scenario.SamplingScenario #DDDDDD{
+        + simulate()
+    }
+
+    class memosampler.sampler.LHS{
+        + create_design():
+        + decode_design():
+    }
+
+    class memosampler.sampler.FullFactorial{
+        + create_design():
+        + decode_design():
+    }
+
+    class memosampler.sampler.SamplingModel{
+
+    }
+
+    class memosampler.sampler.ModelElement{
+        + name: str
+    }
+
+    abstract class memosampler.sampler.Variability {
+    }
+
+
+    memosampler.sampler.LHS --|> memosampler.sampler.SamplingStrategy: is a >
+    memosampler.sampler.FullFactorial --|> memosampler.sampler.SamplingStrategy: is a >
+
+    memosampler.scenario.SamplingScenario -- memosampler.sampler.Sampler: has a <
+    memosampler.sampler.SamplingStrategy -- memosampler.sampler.Sampler: has a <
+    memosampler.sampler.SamplingModel -- memosampler.sampler.Sampler : has a <
+
+
+    memosampler.sampler.SamplingModel o-- "*" memosampler.sampler.ModelElement: has >
+    memosampler.sampler.ModelElement o-- memosampler.sampler.Variability: has a >
+
+    memosampler.sampler.Variability <|-- memosampler.sampler.Constant: < is a
+    memosampler.sampler.Variability <|-- memosampler.sampler.RangeOfIntegers: < is a
+    memosampler.sampler.Variability <|-- memosampler.sampler.RangeOfRealNumbers: < is a
+    memosampler.sampler.Variability <|-- memosampler.sampler.NumericalLevels: < is a
+    memosampler.sampler.Variability <|-- memosampler.sampler.NonNumericalLevels: < is a
+
+@enduml

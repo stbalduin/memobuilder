@@ -1,0 +1,135 @@
+@startuml
+
+package memosampler <<Frame>> {
+    package "memosampler.sampler"  {
+        Interface Variability {
+            
+        }
+    
+        Class Interval {
+            + double min_val
+            + double max_val
+            + __init__(self, double min, double max)
+        }
+        
+        Class Variable {
+            + String name
+            + Variability variability
+        }
+        
+        Class Constant {
+            + String name
+            + Object value
+        }
+        
+        Class Sampler {
+              - Map meta_data
+              - int step_size
+              - List<Variable> design_variables
+              - List<Constant> constant_variables
+              - SamplingStrategy strategy
+              + __init__(Map meta_data, int step_size)
+              + set_variable(String var_name, Variability variability)
+              + set_constant(String var_name, Object value)
+              + sample(int num_samples, SamplingStrategy strategy): x, y
+        }
+        
+        Interface SamplingStrategy {
+            + __init__(Map meta_data, int step_size)
+            + sample(int num_samples, List design_vars, List static_vars)
+        }
+        
+        Class LHS {
+            + __init__(Map meta_data, int step_size)
+            + sample(int num_samples, List<Variable> design_vars, List<Constant> static_vars)   
+            - _create_design(...): x, x_norm
+            - _simulate(...)
+        }
+        
+        Interval --|> Variability
+        Variable -- Variability
+        Sampler -- Variable
+        Sampler -- Constant
+        Sampler "sampler" -- "strategy" LHS
+        LHS --|> SamplingStrategy
+    }    
+    
+    package "memosampler.mosaik"  {
+
+        Class MosaikExperiment {
+            + Map sim_config
+            + Map static_param_vals
+            + List out_attr_names
+            + int step_size
+            + __init__(sim_config, static_param_vals, out_attr_names, step_size)
+            + simulate(Map sim_params, Map sim_inputs) ndarray
+            - _compose_scenario(Map sim_params, Map sim_inputs)
+            - _create_input_simulators(Map sim_inputs) Map<str,Entity>
+            - _create_output_container(List out_attr_names) Entity
+            - _create_model_under_investigation(Map model_params) Entity
+            - _connect_inputs(Map<str,Entity> input_sims, Entity model)
+            - _connect_outputs(List out_attr_names, Entity model, Entity container)
+        }
+     
+        Class SinkSimulator {
+            + init(String sid, int step_size, List attr_names)
+            + create(int num, String model, Map container)
+            + step(int time, Map inputs)
+            + get_data(Map outputs)
+        }
+        
+        Class SourceSimulator{
+            + init(String sid, int step_size)
+            + create(int num, String model, float value)
+            + step(int time, Map inputs)
+            + get_data(Map outputs)    
+        }
+        
+        MosaikExperiment -- SinkSimulator
+        MosaikExperiment -- SourceSimulator
+    }    
+    
+}
+
+
+
+ 
+
+
+
+package mosaik <<Frame>> #DDDDDD {
+    package "mosaik.api" #DDDDDD {    
+        Class Simulator {
+            {abstract} init()
+            {abstract} create()
+            {abstract} step()
+            {abstract} get_data()    
+        }
+    }    
+    
+    package "mosaik.scenario" #DDDDDD {
+    Class ModelMock {
+    }
+    
+    Class Entity {
+    }
+    
+    Class World {
+    }
+}
+}
+
+
+
+
+MosaikExperiment --> Entity
+MosaikExperiment --> ModelMock
+MosaikExperiment --> World
+
+SinkSimulator -|> Simulator
+SourceSimulator -|> Simulator
+
+LHS -- MosaikExperiment
+
+@enduml
+

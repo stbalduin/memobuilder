@@ -1,0 +1,79 @@
+@startuml
+    start
+    
+    :Input: meta data/
+    note right 
+        A list of all design variables
+        and their ranges
+        V0: var_name: min,max,causality
+    end note 
+    
+    
+    partition DoE {
+        :create design|
+        note right 
+            V0: Latin Hypercube Sampling
+                
+        end note
+    }
+    
+    :Output: sampling design/
+    note right
+        A list of input parameter 
+        combinations (experiments)
+    end note
+    
+    partition Sampling {
+        while(more experiments in sampling design?)
+           :create sampling scenario]
+           note right
+               Sets up a mosaik scenario with:
+               * the model under investigation
+               * dummy simulators that provide inputs
+               * a dummy simulator that collects outputs
+           end note
+           :simulate]
+           note right
+               simulates a single step
+           end note
+           :save output data]
+        endwhile
+    }
+    
+    :Output: Input and Output data/
+    note right
+        A list of input parameter 
+        combinations and the respective
+        simulation results
+    end note
+    
+    partition Learning {
+        :split data for k-fold cross validation]
+        while(more folds?) 
+            :train(on k-1 subsets of data)|
+            :evaluate(on holdout data)]
+        endwhile
+    
+        :train (on all data)|
+    }
+    
+    :Output: Trained metamodel and performance data/
+    
+    :Export metamodel]
+    note right
+        ... in a format understood by surrogate
+         model simulator
+    end note
+    
+    end
+    
+    legend
+        Offline Sampling
+    end legend
+    
+    footer 
+        OFFIS 2016
+    end footer
+    
+    
+    @enduml

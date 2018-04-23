@@ -1,0 +1,106 @@
+@startuml
+autonumber
+
+
+create ":SamplingScenario" as A
+-> A : simulate(\n  sim_params, \n  model_params, \n  model_inputs\n)
+activate A
+
+loop for each sampling point
+    create ":World" as B
+    A -> B:
+
+    A -> B: start()
+    activate B
+    create ":InputSim" as C
+    B -> C : init()
+    activate C
+    C -> B: meta
+    deactivate C
+    deactivate B
+
+    A -> B
+    activate B
+    B -> C: create(model_inputs)
+    activate C
+    C -> B: entities
+    deactivate C
+    deactivate B
+
+    A -> B: start()
+    activate B
+    create ":CollectorSim" as D
+    B -> D: init()
+    activate D
+    D -> B: meta
+    deactivate D
+    deactivate B
+
+    A -> B
+    activate B
+    B -> D: create()
+    activate D
+    D -> B: entities
+    deactivate D
+    deactivate B
+
+    A -> B: start(sim_params)
+    activate B
+    create ":Sim" as E
+    B -> E: init(sim_params)
+    activate E
+    E -> B: meta
+    deactivate E
+    deactivate B
+
+    A -> B
+    activate B
+    B -> E: create(model_params)
+    activate E
+    E -> B: entities
+    deactivate E
+    deactivate B
+
+    A -> B: run_until(1s)
+    activate B
+
+    loop until simulation finishes
+        B -> C: step()
+        activate C
+        deactivate C
+
+        B -> D: step()
+        activate D
+        deactivate D
+
+        B -> E: step()
+        activate E
+        deactivate E
+     end
+
+    A -> D: get_monitored_data()
+    activate D
+    D --> A
+
+    deactivate B
+    destroy B
+    destroy C
+    destroy D
+    destroy E
+
+end
+deactivate A
+
+@enduml
+
+@startuml
+Alice -> ":Bob": Authentication Request
+":Bob" --> Alice: Authentication Response
+
+Alice -> ":Bob": Another authentication Request
+Alice <-- ":Bob": another authentication Response
+
+
+
+
+@enduml

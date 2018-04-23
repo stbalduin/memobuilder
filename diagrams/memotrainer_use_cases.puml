@@ -1,0 +1,61 @@
+Deutsch:
+@startuml
+    left to right direction
+
+    actor User
+
+    rectangle training {
+        (Daten-\nvorverarbeitungsschritte\nfestlegen) as (UC1)
+        (Daten-\nnachbearbeitungsschritte\nfestlegen) as (UC2)
+        (Metamodell wählen) as (UC3)
+        (Hyperparameter festlegen) as (UC4)
+        (Hyperparameter optimieren) as (UC5)
+        (Metamodell fitten) as (UC6)
+        (Metamodell bewerten) as (UC7)
+        (Metamodell speichern) as (UC8)
+        (Vorverarbeitungskette speichern) as (UC9)
+        (Nachbearbeitungskette speichern) as (UC10)
+
+        User -> UC1
+        User -> UC2
+        User -> UC3
+        User -> UC4
+        UC5 -|> UC4
+        User -> UC6
+        UC7 <. UC6: includes
+        User -> UC8
+        UC9 <. UC8: includes
+        UC10 <. UC8: includes
+    }
+@enduml
+
+English:
+@startuml
+    left to right direction
+
+    actor User
+
+    rectangle training {
+        (Add preprocessing steps) as (UC1)
+        (Add postprocessing steps) as (UC2)
+        (choose metamodel) as (UC3)
+        (set hyperparameters) as (UC4)
+        (optimize hyperparameters) as (UC5)
+        (fit metamodel) as (UC6)
+        (evaluate metamodel) as (UC7)
+        (persist metamodel) as (UC8)
+        (persist preprocessing steps) as (UC9)
+        (persist postprocessing steps) as (UC10)
+
+        User -> UC1
+        User -> UC2
+        User -> UC3
+        User -> UC4
+        UC5 -|> UC4
+        User -> UC6
+        UC7 <. UC6: includes
+        User -> UC8
+        UC9 <. UC8: includes
+        UC10 <. UC8: includes
+    }
+@enduml
