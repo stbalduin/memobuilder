@@ -1,7 +1,7 @@
 import collections
 
 import memosampler
-import memomodel
+from memodb import memomodel
 
 
 def create_sampler(sampler_configuration):

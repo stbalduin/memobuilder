@@ -1,19 +1,20 @@
 from sklearn import cross_validation
 
 import memotrainer
-import memomodel
+from memodb import memomodel
 
 
 class SurrogateModelTrainer(object):
-    def __init__(self, test_split_ratio=0.2, num_cross_val_folds=5):
+    def __init__(self, test_split_ratio=0.2, num_cv_folds=5):
         self.name = None
-        self.metamodel_trainer = Trainer(test_split_ratio, num_cross_val_folds)
+        self.metamodel_trainer = Trainer(test_split_ratio, num_cv_folds)
         self.metamodels = []
 
     def fit(self, input_response_dataset):
         training_results = []
         for metamodel in self.metamodels:
-            training_results.append(self.metamodel_trainer.fit(metamodel, input_response_dataset))
+            training_results.append(
+                self.metamodel_trainer.fit(metamodel, input_response_dataset))
 
         result = memomodel.SurrogateModelTrainingResult()
         result.training_results = training_results
@@ -26,9 +27,9 @@ class SurrogateModelTrainer(object):
 
 class Trainer(object):
 
-    def __init__(self, test_split_ratio=0.2, num_cross_val_folds=5):
+    def __init__(self, test_split_ratio=0.2, num_cv_folds=5):
         self.test_split_ratio = test_split_ratio
-        self.num_cross_val_folds = num_cross_val_folds
+        self.num_cross_val_folds = num_cv_folds
 
     def fit(self, metamodel, input_response_data):
         # select input dataset for this metamodel
@@ -42,7 +43,7 @@ class Trainer(object):
 
         # compute different scores of the metamodel on the test data
         score_r2 = memotrainer.scores.r2_score(metamodel, test_data)
-        score_avg = memotrainer.scores.avg_score(metamodel, test_data)
+        score_mae = memotrainer.scores.mae_score(metamodel, test_data)
         score_hae = memotrainer.scores.hae_score(metamodel, test_data)
         score_mse = memotrainer.scores.mse_score(metamodel, test_data)
 
@@ -53,7 +54,7 @@ class Trainer(object):
         result.metamodel = metamodel
 
         result.score_r2 = score_r2
-        result.score_avg = score_avg
+        result.score_mae = score_mae
         result.score_hae = score_hae
         result.score_mse = score_mse
 

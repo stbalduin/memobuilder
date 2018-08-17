@@ -1,4 +1,6 @@
-class Variability():
+import numpy as np
+
+class Variability(object):
     """This class serves as a superclass for all classes which specify the
     variability of variables. It should not be invoked."""
 
@@ -17,7 +19,6 @@ class Variability():
         """
         return isinstance(self, Constant)
 
-
     def denormalize(self, value):
         """
 
@@ -25,7 +26,6 @@ class Variability():
         :return:
         """
         raise Exception('Variability should not be invoked.')
-
 
     def __repr__(self):
         """
@@ -73,7 +73,7 @@ class RangeOfIntegers(Variability):
         self.max = max
 
     def denormalize(self, value):
-        raise Exception('not yet implemented')
+        return int(np.round(self.min + (self.max - self.min) * value))
 
 
 class RangeOfRealNumbers(Variability):

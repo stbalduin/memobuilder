@@ -21,7 +21,7 @@ def create_surrogate_model_trainer(surrogate_model_configuration):
     return surrogate_model_trainer
 
 
-def create_metamodel(model_type, model_arguments, inputs, responses):
+def create_metamodel(model_type, model_arguments, inputs, responses, trainer_score):
     metamodel_classes = memotrainer.MetaModelClassFinder().metamodel_classes
     if model_type not in metamodel_classes:
         raise Exception('Unknown Metamodel type: %s' % (model_type))
@@ -33,6 +33,6 @@ def create_metamodel(model_type, model_arguments, inputs, responses):
     clazz = metamodel_classes[model_type]
 
     # create an instance of that class with keyword arguments
-    instance = clazz(input_names=inputs, response_names=responses, **kwargs)
+    instance = clazz(input_names=inputs, response_names=responses, trainer_score=trainer_score, **kwargs)
 
     return instance

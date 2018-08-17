@@ -449,7 +449,7 @@ def run_code(code, code_path, ns=None, function_name=None):
     # as follows:
     # The module appliancesim got imported previously. The example code
     # executed in this function after changing the cwd tries to import
-    # appliancesim.util. This will fail with an ImportError.
+    # appliancesim.model. This will fail with an ImportError.
 
     pwd = os.getcwd()
     old_sys_path = list(sys.path)

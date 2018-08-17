@@ -4,7 +4,7 @@ import argparse
 from memobuilder.terminal_controller import TerminalController
 
 
-class MeMoBuilder():
+class MeMoBuilder(object):
 
     @staticmethod
     def from_cli_args(arguments):
@@ -66,12 +66,11 @@ class MeMoBuilder():
 
         return parser.parse_args(arguments)
 
-
     def __init__(self, parsed_args):
         self.controller = TerminalController(parsed_args.yaml_file, parsed_args.H5File,
                                              parsed_args.sampler, parsed_args.trainer)
 
-    def run(self, custom_adapters={}):
+    def run(self, custom_adapters=None):
         """
         This function executes the process of building a SurrogateModel. It starts with the sampling of data
         points and then trains models to fit this data. The configuration must first be imported from a yaml file.
@@ -84,10 +83,12 @@ class MeMoBuilder():
         to create an instance of a model. Because of this MeMoBuilder allows the user to implement
         prepare_init_arguments() and prepare_create_arguments() functions. These functions may be passed in the
         function_overrides dictionary. By default, the parameter values would be passed as keyword arguemnts to mosaik.
-        :param function_overrides: a dictionary containing functions, that will be attached to the SamplingScenario
+        :param custom_adapters: a dictionary containing functions, that will be attached to the SamplingScenario
             in use. Only the keys 'prepare_init_arguments' and 'prepare_create_arguments' will be processed.
         :return:
         """
+        if custom_adapters is None:
+            custom_adapters = {}
         self.controller.run(custom_adapters=custom_adapters)
 
 

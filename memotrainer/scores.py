@@ -2,7 +2,6 @@ import numpy as np
 import math
 import sklearn.metrics as metrics
 from sklearn.utils import validation
-# from scipy.stats.stats import pearsonr
 
 
 def r2_score(approximation_model, test_data):
@@ -21,7 +20,7 @@ def r2_score(approximation_model, test_data):
     return score_value
 
 
-def avg_score(approximation_model, test_data):
+def mae_score(approximation_model, test_data):
     """
     computes the average score of the *approximation_model*
     :param approximation_model: in :class:'MetaModel'

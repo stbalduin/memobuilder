@@ -1,18 +1,22 @@
-import h5db
-import memobuilder
+from memodb import h5db
+from memobuilder.memobuilder_model import MeMoBuilderModel
+from memobuilder.terminal_view import TerminalView
 
 
-class TerminalController():
+class TerminalController(object):
 
     def __init__(self, yaml_file, h5_file, run_sampler, run_trainer):
-        self.yaml_file = yaml_file # the yaml configuration file
-        self.h5_file = h5_file # the hdf data file
-        self.run_sampler_option = run_sampler # switches the sampler component on or off
-        self.run_trainer_option = run_trainer # switchtes the trainer componen on or off
-        self.model = memobuilder.MeMoBuilderModel()
-        self.view = memobuilder.TerminalView()
+        self.yaml_file = yaml_file  # the yaml configuration file
+        self.h5_file = h5_file  # the hdf data file
+        self.run_sampler_option = run_sampler  # switches the sampler component on or off
+        self.run_trainer_option = run_trainer  # switchtes the trainer componen on or off
+        self.model = MeMoBuilderModel()
+        self.view = TerminalView()
 
-    def run(self, custom_adapters={}):
+    def run(self, custom_adapters=None):
+        if custom_adapters is None:
+            custom_adapters = {}
+
         # initialize the model (establish db connection.)
         self.open_db()
 
@@ -83,7 +87,10 @@ class TerminalController():
             self.view.announce_configuration_import()
             self.model.import_configuration_from_yaml(self.yaml_file)
 
-    def run_sampler(self, custom_adapters={}):
+    def run_sampler(self, custom_adapters=None):
+        if custom_adapters is None:
+            custom_adapters = {}
+
         # load sampler configurations
         sampler_configurations = self.model.get_sampler_configurations()
         if len(sampler_configurations) == 0:

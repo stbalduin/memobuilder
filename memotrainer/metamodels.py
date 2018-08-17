@@ -18,7 +18,9 @@ from sklearn.linear_model import LinearRegression, MultiTaskLassoCV, RidgeCV
 from sklearn.linear_model.coordinate_descent import MultiTaskElasticNetCV
 from sklearn.kernel_ridge import KernelRidge
 from sklearn import tree
-
+from sklearn.svm import SVR
+from sklearn.neural_network.multilayer_perceptron import MLPRegressor
+from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import GridSearchCV
 
 from sklearn.pipeline import make_pipeline
@@ -43,20 +45,39 @@ class MetaModel(object):
 
     """
 
-    train_score = {'r2': {'name': 'r2_score', 'function': make_scorer(r2_score, greater_is_better=True)},
-                   'mae': {'name': 'mean_absolute_error',
-                           'function': make_scorer(mean_absolute_error, greater_is_better=False)},
-                   'hae': {'name': 'harmonic_ average_error',
-                           'function': make_scorer(scores.harmonic_averages_error, greater_is_better=False)},
-                   'mse': {'name': 'mean_squared_error',
-                           'function': make_scorer(mean_squared_error, greater_is_better=False)}}
+    train_score = {
+        'r2_score': {
+            'name': 'r2_score', 'function': make_scorer(
+                r2_score, greater_is_better=True)},
+        'mae': {
+            'name': 'mean_absolute_error',
+            'function': make_scorer(
+                mean_absolute_error, greater_is_better=False)},
+        'hae': {
+            'name': 'harmonic_ average_error',
+            'function': make_scorer(
+                scores.harmonic_averages_error, greater_is_better=False)},
+        'mse': {
+            'name': 'mean_squared_error',
+            'function': make_scorer(
+                mean_squared_error, greater_is_better=False)}}
 
-    def __init__(self, input_names=[], response_names=[], preprocessors=[], **kwargs):
+    def __init__(self, input_names=None, response_names=None, preprocessors=None, trainer_score='r2_score', **kwargs):
         """
 
         :param kwargs: arbitrary keyword arguments that will be passed to *this.regression_pipeline* when it is fitted
                to the training data.
         """
+
+        if input_names is None:
+            input_names = []
+
+        if response_names is None:
+            response_names = []
+
+        if preprocessors is None:
+            preprocessors = []
+
         self.kwargs = kwargs
 
         self.regression_pipeline = None
@@ -81,6 +102,8 @@ class MetaModel(object):
         according to the dataset used for the training.
 
         """
+
+        self.score = self.train_score[trainer_score]
     
     def fit(self, x_train, y_train):
         """
@@ -200,7 +223,7 @@ class OLSModel(MetaModel):
         self._update_pipeline_and_fit(x_train, y_train, [ols])
         
         
-class LassoModel(MetaModel):
+class Lasso(MetaModel):
     """
     Fits a linear model to the data using a multitask lasso implementation with built-in cross-validation.
     See http://scikit-learn.org/stable/modules/linear_model.html#lasso for
@@ -290,7 +313,7 @@ class ElasticNetModel(MetaModel):
         self._update_pipeline_and_fit(x_train, y_train, [elastic_net])
         
          
-class KrigingModel(MetaModel):
+class Kriging(MetaModel):
     """
     Fits a gaussian process to the data while optionally using GridSearchCV for an exhaustive search over specified
     parameter values.
@@ -387,6 +410,81 @@ class KNeighborsModel(MetaModel):
             pass
         self._update_pipeline_and_fit(x_train, y_train, [clf])
 
+
+class ArtificialNeuralNetwork(MetaModel):
+    def __init__(self, **kwargs):
+        MetaModel.__init__(self, **kwargs)
+
+    def fit(self, x_train, y_train):
+        self.processing_steps = [StandardScaler()]
+
+        ann = MLPRegressor()
+
+        params = {'hidden_layer_sizes': [100],
+                  'alpha': [0.001, 0.1, 1,  10, 100],
+                  'max_iter': [2000],
+                  'solver': ['lbfgs'],
+                  'activation': ['relu'] #'identity', 'logistic', 'tanh', 'relu'
+        }
+        if 'hidden_layer_sizes' in self.kwargs:
+            self.kwargs['hidden_layer_sizes'] = self.parsefunction(self.kwargs['hidden_layer_sizes'])
+        params.update(self.kwargs)
+        clf = GridSearchCV(estimator=ann, param_grid=params, scoring=self.score['function'])
+        clf.cv = 5
+        print('gridsearch ann')
+
+        self._update_pipeline_and_fit(x_train, y_train, [clf])
+
+    def parsefunction(self, string_tuple):
+        array = []
+
+        for string in string_tuple:
+            tuple = self.parse_tuple(string)
+            if tuple is None:
+                tuple = int(string)
+            array.append(tuple)
+        return array
+
+    def parse_tuple(self, string):
+        try:
+            s = eval(string)
+            if type(s) == tuple:
+                return s
+            return
+        except:
+            return
+
+
+class SupportVectorRegression(MetaModel):
+    def __init__(self, **kwargs):
+        MetaModel.__init__(self, **kwargs)
+
+    def fit(self, x_train, y_train):
+        self.processing_steps = [StandardScaler()]
+        svr = SVR(kernel='rbf', gamma=0.1)
+
+        '''http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf'''
+        # C = [2**i for i in np.arange(start=-5, stop=16, step=2)]
+        # gamma = [2**i for i in np.arange(start=-15, stop=4, step=2)]
+
+
+        '''https://stats.stackexchange.com/questions/43943/which-search-range-for-determining-svm-optimal-c-and-gamma-parameters'''
+        C = [2 ** i for i in [-3,-2, -1, 0, 1, 2, 3, 4, 5]]
+        gamma = [2 ** i for i in [-5, -4, -3, -2, -1, 0, 1, 2, 3]]
+
+        params = {"C": C,
+                  "gamma": gamma}
+        params.update(self.kwargs)
+
+        reg = GridSearchCV(estimator=svr, param_grid=params, scoring=self.score['function'])
+            # clf = RandomizedSearchCV(estimator=svr, param_distributions=params, scoring=self.score['function'], n_iter=20)
+        reg.cv = 5
+
+        clf = MultiOutputRegressor(reg)
+        print('gridsearch svr')
+
+     #   y_train = np.ravel(y_train)
+        self._update_pipeline_and_fit(x_train, y_train, [clf])
 
 class DecisionTreeRegression(MetaModel):
     def __init__(self, **kwargs):
@@ -547,13 +645,13 @@ class KernelRidgeRegressionCV(MetaModel):
 #         return np.array(data)
 
 
-class Score():
+class Score(object):
     def __init__(self, type, value):
         self.type = type
         self.value = value
 
 
-class MetaModelClassFinder():
+class MetaModelClassFinder(object):
     def __init__(self):
         # TODO: this solution is not optimal if new metamodels must be loaded as well
         self.metamodel_classes = {clazz.__name__: clazz for clazz in MetaModel.__subclasses__()}

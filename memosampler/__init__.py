@@ -5,3 +5,5 @@ from memosampler.variabilities import Constant, NonNumericalLevels, NumericalLev
     RangeOfRealNumbers, Variability
 from memosampler.sampler import ParameterVariationModel, Sampler
 from memosampler.scenario import SamplingScenario
+from memosampler.halton import halton
+from memosampler.sobol import sobol

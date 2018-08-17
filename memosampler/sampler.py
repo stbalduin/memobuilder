@@ -1,5 +1,5 @@
 import collections
-import memomodel
+from memodb import memomodel
 
 
 class ParameterVariationModel(object):

@@ -1,11 +1,11 @@
 import yaml
-import h5db
-import memomodel
+from memodb import h5db
+from memodb import memomodel
 import memosampler
 import memotrainer
 
 
-class MeMoBuilderModel():
+class MeMoBuilderModel(object):
     def __init__(self):
         self.db = None # the hdf5 data file
         self.configuration_objects = None # all configuration objects. loaded on startup from hdf5 file
@@ -30,9 +30,9 @@ class MeMoBuilderModel():
         return self.configuration_objects
 
     def save_configuration_to_hdf(self, configuration_objects):
-       for configuration_segment in configuration_objects.keys():
-           for object in configuration_objects[configuration_segment]:
-               self.db.save_object(object)
+        for configuration_segment in configuration_objects.keys():
+            for obj in configuration_objects[configuration_segment]:
+                self.db.save_object(obj)
 
     def load_configuration_from_db(self):
         self.configuration_objects = {
@@ -130,7 +130,6 @@ class MeMoBuilderModel():
         configs = self.db.load_objects(memomodel.SurrogateModelConfig)
         config = [config for config in configs if config.name == surrogate_name][0]
         return config.sampler_configuration.model_structure
-
 
     def get_training_results(self):
         return self.training_results

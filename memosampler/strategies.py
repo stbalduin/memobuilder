@@ -1,5 +1,5 @@
 import pyDOE as doe
-
+import numpy as np
 import memosampler
 
 
@@ -79,7 +79,7 @@ class HaltonSeq(FixedDesignBasedSamplingStrategy):
 
     def init(self):
         num_vars = len(self.param_variation_model.design_variables)
-        self.design = halton.halton(num_vars, self.num_samples)
+        self.design = memosampler.halton(num_vars, self.num_samples)
         #self.design = sobol.sobol(num_vars, self.num_samples)
 
 
@@ -90,4 +90,4 @@ class SobolSeq(FixedDesignBasedSamplingStrategy):
 
     def init(self):
         num_vars = len(self.param_variation_model.design_variables)
-        self.design = sobol.sobol(num_vars, self.num_samples)
+        self.design = memosampler.sobol(num_vars, self.num_samples)
