@@ -47,7 +47,7 @@ class MetaModel(object):
         'r2_score': {
             'name': 'r2_score', 'function': make_scorer(
                 r2_score, greater_is_better=True)},
-        'mae': {
+        'avg': {
             'name': 'mean_absolute_error',
             'function': make_scorer(
                 mean_absolute_error, greater_is_better=False)},
