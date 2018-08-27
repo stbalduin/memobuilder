@@ -46,9 +46,9 @@ class TerminalView():
             for result in surrogate_result.training_results:
                 func = '%s --> %s' % (result.metamodel.input_names, result.metamodel.response_names)
                 score_r2 = 'r2_score=%f' % result.score_r2
-                score_mae = 'mae_score=%f' % result.score_mae
+                score_avg = 'avg_score=%f' % result.score_avg
                 score_hae = 'hae_score=%f' % result.score_hae
                 score_mse = 'mse_score=%f' % result.score_mse
                 type = '(%s)' % result.metamodel.__class__.__name__
 
-                print('  -', func, ':', score_r2, score_hae, score_mae, score_mse, type)
+                print('  -', func, ':', score_r2, score_hae, score_avg, score_mse, type)

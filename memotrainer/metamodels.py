@@ -6,13 +6,9 @@ training datasets.
 import numpy as np
 import copy
 
-from scipy.interpolate import Rbf
 
-from sklearn.preprocessing.data import MinMaxScaler, StandardScaler
-from sklearn import cross_validation
+from sklearn.preprocessing.data import StandardScaler
 from sklearn import neighbors
-from sklearn import preprocessing
-#from sklearn.gaussian_process import GaussianProcess <-- legacy
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.linear_model import LinearRegression, MultiTaskLassoCV, RidgeCV
 from sklearn.linear_model.coordinate_descent import MultiTaskElasticNetCV
@@ -22,13 +18,15 @@ from sklearn.svm import SVR
 from sklearn.neural_network.multilayer_perceptron import MLPRegressor
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import make_scorer
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
-
+from scipy.stats import randint as sp_randint
+from scipy.stats import uniform as sp_uniform
 from memotrainer import scores
 import pandas
 
@@ -401,13 +399,17 @@ class KNeighborsModel(MetaModel):
 
         """
         if 'param_grid'in self.kwargs:
-            knn = neighbors.KNeighborsRegressor()
-            clf = GridSearchCV(knn, self.kwargs['param_grid'])
-            #clf.scoring = max_absolute_componentwise_error
-            clf.cv=20
+            param_grid =self.kwargs['param_grid']
         else:
-            clf = neighbors.KNeighborsRegressor(**self.kwargs)
-            pass
+            param_grid = {
+                'n_neighbors': sp_randint(1, 15)
+            }
+
+        clf = RandomizedSearchCV(
+            neighbors.KNeighborsRegressor(),
+            param_distributions=param_grid,
+            n_iter=5)
+
         self._update_pipeline_and_fit(x_train, y_train, [clf])
 
 
@@ -420,18 +422,23 @@ class ArtificialNeuralNetwork(MetaModel):
 
         ann = MLPRegressor()
 
-        params = {'hidden_layer_sizes': [100],
-                  'alpha': [0.001, 0.1, 1,  10, 100],
-                  'max_iter': [2000],
+        params = {'hidden_layer_sizes': sp_randint(20, 150),
+                  'alpha': sp_uniform(0, 100),
+                  'max_iter': sp_randint(100, 2000),
                   'solver': ['lbfgs'],
                   'activation': ['relu'] #'identity', 'logistic', 'tanh', 'relu'
         }
         if 'hidden_layer_sizes' in self.kwargs:
             self.kwargs['hidden_layer_sizes'] = self.parsefunction(self.kwargs['hidden_layer_sizes'])
+
         params.update(self.kwargs)
-        clf = GridSearchCV(estimator=ann, param_grid=params, scoring=self.score['function'])
-        clf.cv = 5
-        print('gridsearch ann')
+        clf = RandomizedSearchCV(
+            estimator=ann,
+            param_distributions=params,
+            n_iter=10,
+            scoring=self.score['function'])
+        print('random search ann')
+        #print(params)
 
         self._update_pipeline_and_fit(x_train, y_train, [clf])
 
@@ -472,16 +479,20 @@ class SupportVectorRegression(MetaModel):
         C = [2 ** i for i in [-3,-2, -1, 0, 1, 2, 3, 4, 5]]
         gamma = [2 ** i for i in [-5, -4, -3, -2, -1, 0, 1, 2, 3]]
 
-        params = {"C": C,
-                  "gamma": gamma}
+        params = {"C": sp_uniform(0.125, 32),
+                  "gamma": sp_uniform(0.03125, 8)}
         params.update(self.kwargs)
 
-        reg = GridSearchCV(estimator=svr, param_grid=params, scoring=self.score['function'])
+        reg = RandomizedSearchCV(
+            estimator=svr,
+            param_distributions=params,
+            n_iter=10,
+            scoring=self.score['function'])
             # clf = RandomizedSearchCV(estimator=svr, param_distributions=params, scoring=self.score['function'], n_iter=20)
-        reg.cv = 5
+
 
         clf = MultiOutputRegressor(reg)
-        print('gridsearch svr')
+        print('random search svr')
 
      #   y_train = np.ravel(y_train)
         self._update_pipeline_and_fit(x_train, y_train, [clf])
