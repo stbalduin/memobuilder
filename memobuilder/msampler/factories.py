@@ -3,8 +3,7 @@ import collections
 
 from memobuilder import msampler as memosampler
 from memobuilder.mdb import memomodel
-from memobuilder.mdb.memomodel.ParameterVariationMode import (
-    CONSTANT, NUMERICAL_LEVELS, RANGE_OF_INTEGERS, RANGE_OF_REAL_NUMBERS)
+from memobuilder.mdb.memomodel import ParameterVariationMode as pvm
 
 
 def create_sampler(sampler_configuration):
@@ -64,22 +63,22 @@ def create_parameter_variation_model(parameter_variations):
     design_variables = collections.OrderedDict()
     for param_var in parameter_variations:
         args = {arg.key: arg.value for arg in param_var.variation_arguments}
-        if param_var.variation_mode == CONSTANT.value:
+        if param_var.variation_mode == pvm.CONSTANT.value:
             design_constants[
                 param_var.parameter_name
             ] = memosampler.Constant(**args)
 
-        elif param_var.variation_mode == RANGE_OF_REAL_NUMBERS.value:
+        elif param_var.variation_mode == pvm.RANGE_OF_REAL_NUMBERS.value:
             design_variables[
                 param_var.parameter_name
             ] = memosampler.RangeOfRealNumbers(**args)
 
-        elif param_var.variation_mode == RANGE_OF_INTEGERS.value:
+        elif param_var.variation_mode == pvm.RANGE_OF_INTEGERS.value:
             design_variables[
                 param_var.parameter_name
             ] = memosampler.RangeOfIntegers(**args)
 
-        elif param_var.variation_mode == NUMERICAL_LEVELS.value:
+        elif param_var.variation_mode == pvm.NUMERICAL_LEVELS.value:
             design_variables[
                 param_var.parameter_name
             ] = memosampler.NumericalLevels(**args)

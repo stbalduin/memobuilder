@@ -62,7 +62,7 @@ class SamplingScenario():
         self.model_adapter = MosaikSimulatorAdapter()
 
     def simulate(self, parameter_assignments, duration=STEP_SIZE):
-        print('SIMULATE with parameters %s' % (parameter_assignments))
+        # print('SIMULATE with parameters %s' % (parameter_assignments))
 
         # compose scenario
         world = mosaik.World(self.sim_config)

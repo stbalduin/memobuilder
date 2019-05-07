@@ -54,10 +54,14 @@ class ParameterVariation(h5db.H5DBObject, yaml.YAMLObject):
 
 class ParameterVariationMode(enum.Enum):
     CONSTANT = 'constant'
-    RANGE_OF_REAL_NUMBERS = 'range_of_real_numbers' # supported by LHS sampling strategy
-    RANGE_OF_INTEGERS = 'range_of_integers' # not supported by a sampling strategy yet
-    NUMERICAL_LEVELS = 'numerical_levels'   # supported by FullFactorial sampling strategy
-    NOMINAL_LEVELS = 'nominal_levels'   # supported by FullFactorial sampling strategy
+    # supported by LHS sampling strategy
+    RANGE_OF_REAL_NUMBERS = 'range_of_real_numbers'
+    # not supported by a sampling strategy yet
+    RANGE_OF_INTEGERS = 'range_of_integers'
+    # supported by FullFactorial sampling strategy
+    NUMERICAL_LEVELS = 'numerical_levels'
+    # supported by FullFactorial sampling strategy
+    NOMINAL_LEVELS = 'nominal_levels'
 
 
 class StrategyConfig(h5db.H5DBObject, yaml.YAMLObject):

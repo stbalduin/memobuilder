@@ -1,5 +1,5 @@
 """This module contains factory methods of the memo trainer."""
-import memotrainer
+from memobuilder import mtrainer as memotrainer
 
 
 def create_surrogate_model_trainer(surrogate_model_configuration):

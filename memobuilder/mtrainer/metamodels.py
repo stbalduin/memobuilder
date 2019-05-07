@@ -214,7 +214,7 @@ class Lasso(MetaModel):
         MetaModel.__init__(self, **kwargs)
 
     def fit(self, x_train, y_train):
-
+        self.kwargs['cv'] = 3
         lasso = MultiTaskLassoCV(**self.kwargs)
         self._update_pipeline_and_fit(x_train, y_train, [lasso])
 
@@ -226,7 +226,7 @@ class RidgeRegressionModel(MetaModel):
         MetaModel.__init__(self, **kwargs)
 
     def fit(self, x_train, y_train):
-
+        self.kwargs['cv'] = 3
         regr = RidgeCV(**self.kwargs)
         self._update_pipeline_and_fit(x_train, y_train, [regr])
 
@@ -247,7 +247,7 @@ class ElasticNetModel(MetaModel):
         MetaModel.__init__(self, **kwargs)
 
     def fit(self, x_train, y_train):
-
+        self.kwargs['cv'] = 3
         elastic_net = MultiTaskElasticNetCV(**self.kwargs)
         self._update_pipeline_and_fit(x_train, y_train, [elastic_net])
 
@@ -272,7 +272,7 @@ class Kriging(MetaModel):
     def fit(self, x_train, y_train):
 
         clf = GaussianProcessRegressor(alpha=0.01, n_restarts_optimizer=100,
-                                       random_state=np.random.random())
+                                       random_state=np.random.randint(1000))
         self._update_pipeline_and_fit(x_train, y_train, [clf])
 
 
@@ -314,7 +314,9 @@ class KNeighborsModel(MetaModel):
         clf = RandomizedSearchCV(
             neighbors.KNeighborsRegressor(),
             param_distributions=param_grid,
-            n_iter=5)
+            n_iter=5,
+            cv=3,
+            iid=True)
 
         self._update_pipeline_and_fit(x_train, y_train, [clf])
 
@@ -347,7 +349,9 @@ class ArtificialNeuralNetwork(MetaModel):
             estimator=ann,
             param_distributions=params,
             n_iter=10,
-            scoring=self.score['function'])
+            scoring=self.score['function'],
+            cv=3,
+            iid=True)
 
         self._update_pipeline_and_fit(x_train, y_train, [clf])
 
@@ -397,7 +401,9 @@ class SupportVectorRegression(MetaModel):
             estimator=svr,
             param_distributions=params,
             n_iter=10,
-            scoring=self.score['function'])
+            scoring=self.score['function'],
+            cv=3,
+            iid=True)
 
         clf = MultiOutputRegressor(reg)
         self._update_pipeline_and_fit(x_train, y_train, [clf])
@@ -447,7 +453,7 @@ class KernelRidgeRegressionCV(MetaModel):
                     param_grid[param_name] = param_value
 
             clf = GridSearchCV(KernelRidge(**kwarg_params),
-                               param_grid=param_grid)
+                               param_grid=param_grid, cv=3)
 
         from sklearn.preprocessing import PolynomialFeatures
         self._update_pipeline_and_fit(x_train, y_train, [clf])

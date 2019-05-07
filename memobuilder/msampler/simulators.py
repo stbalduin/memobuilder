@@ -48,7 +48,7 @@ class InputProvider(mosaik_api.Simulator):
 
     """
     # Sim config for this simulator for inprocess use.
-    SIM_CONFIG = {'python': 'memosampler.simulators:InputProvider'}
+    SIM_CONFIG = {'python': 'memobuilder.msampler.simulators:InputProvider'}
 
     # EID prefix for all model instances.
     EID_PREFIX = 'Input_'
@@ -164,7 +164,7 @@ class SeriesInputProvider(mosaik_api.Simulator):
 
     """
     # Sim config for this simulator for inprocess use.
-    SIM_CONFIG = {'python': 'memosampler.simulators:SeriesInputProvider'}
+    SIM_CONFIG = {'python': 'memobuilder.msampler.simulators:SeriesInputProvider'}
     # EID prefix for all model instances.
     EID_PREFIX = 'SeriesInput_'
     # Mosaik meta data for this simulator.
@@ -277,7 +277,7 @@ class Collector(mosaik_api.Simulator):
 
     """
     # Sim config for this simulator for inprocess use.
-    SIM_CONFIG = {'python': 'memosampler.simulators:Collector'}
+    SIM_CONFIG = {'python': 'memobuilder.msampler.simulators:Collector'}
     # EID prefix for all model instances.
     EID_PREFIX = 'Sink_'
     # Mosaik meta data for this simulator.
@@ -394,7 +394,7 @@ class TestSimulator(mosaik_api.Simulator):
     constant value. *a* and *in* may be varied.
     """
 
-    SIM_CONFIG = {'python': 'memosampler.simulators:TestSimulator'}
+    SIM_CONFIG = {'python': 'memobuilder.msampler.simulators:TestSimulator'}
     """
     Sim config for the test simulator.
     """

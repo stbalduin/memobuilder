@@ -26,7 +26,7 @@ class Scalar():
 
     @staticmethod
     def read(parent_group, attr_name):
-        return parent_group[attr_name].value
+        return parent_group[attr_name][()]
 
 
 class Vector():
@@ -36,7 +36,7 @@ class Vector():
 
     @staticmethod
     def read(parent_group, attr_name):
-        return parent_group[attr_name].value
+        return parent_group[attr_name][()]
 
 
 class Matrix():
@@ -57,7 +57,7 @@ class List():
 
     @staticmethod
     def read(parent_group, attr_name):
-        return [item.decode() for item in parent_group[attr_name].value]
+        return [item.decode() for item in parent_group[attr_name][()]]
 
 
 class DataFrame():
@@ -100,7 +100,7 @@ class Object:
     @staticmethod
     def read(parent_group, attr_name):
         # read reference dataset
-        ref_dataset = parent_group[attr_name].value
+        ref_dataset = parent_group[attr_name][()]
         # resolve reference
         return Object._resolve_reference(ref_dataset)
 
@@ -129,7 +129,7 @@ class ObjectList:
     @staticmethod
     def read(parent_group, attr_name):
         # read reference dataset
-        ref_dataset = parent_group[attr_name].value
+        ref_dataset = parent_group[attr_name][()]
         # resolve all references
         objects = [Object._resolve_reference(ref) for ref in ref_dataset]
         return objects
@@ -143,7 +143,7 @@ class Reference():
 
     @staticmethod
     def read(parent_group, attr_name):
-        return parent_group[attr_name].value
+        return parent_group[attr_name][()]
 
     @staticmethod
     def type(parent_group, attr_name):
@@ -161,7 +161,7 @@ class Blob():
 
     @staticmethod
     def read(parent_group, attr_name):
-        pickled_obj = parent_group[attr_name].value
+        pickled_obj = parent_group[attr_name][()]
         result = pickle.loads(pickled_obj)
         return result
 
