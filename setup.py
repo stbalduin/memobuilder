@@ -8,37 +8,37 @@ from setuptools import setup, find_packages
 
 setup(
     # Application name:
-    name = 'memobuilder',
+    name='memobuilder',
 
     # Version number (initial):
-    version = '0.1.0',
+    version='0.2.0',
 
     # Short desription of the project:
-    description = 'Environment for the development of simulation metamodels',
+    description='Environment for the development of simulation metamodels',
 
     # Application author details:
     author='Thole Klingenberg',
-    autor_email = 'thole.klingenberg@offis.de',
+    autor_email='thole.klingenberg@offis.de',
 
     # Packages
-    packages = find_packages(),
-    
+    packages=find_packages(),
+
     include_package_data=True,
-    
+
     classifiers=[
         'Private :: Do Not Upload',
     ],
 
     install_requires=[
-          'mosaik', 
-          'mosaik-api>=2.0',
-          'pydoe',
-          'matplotlib',
-          'sklearn',
-          'scikit-neuralnetwork', 
-          'pandas',
-          'sphinx',
-          'sphinxcontrib-plantuml',
-          'sphinx_rtd_theme',
+        'mosaik',
+        'mosaik-api>=2.0',
+        'pydoe',
+        'matplotlib',
+        'sklearn',
+        'scikit-neuralnetwork',
+        'pandas',
+        'sphinx',
+        'sphinxcontrib-plantuml',
+        'sphinx_rtd_theme',
     ],
 )
