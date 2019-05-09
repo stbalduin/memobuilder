@@ -106,7 +106,7 @@ class MeMoBuilder(object):
         """
         if custom_adapters is None:
             custom_adapters = {}
-        self.controller.run(custom_adapters=custom_adapters)
+        return self.controller.run(custom_adapters=custom_adapters)
 
 
 if __name__ == '__main__':
