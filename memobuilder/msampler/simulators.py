@@ -164,7 +164,8 @@ class SeriesInputProvider(mosaik_api.Simulator):
 
     """
     # Sim config for this simulator for inprocess use.
-    SIM_CONFIG = {'python': 'memobuilder.msampler.simulators:SeriesInputProvider'}
+    SIM_CONFIG = {'python': 'memobuilder.msampler.simulators:'
+                            'SeriesInputProvider'}
     # EID prefix for all model instances.
     EID_PREFIX = 'SeriesInput_'
     # Mosaik meta data for this simulator.

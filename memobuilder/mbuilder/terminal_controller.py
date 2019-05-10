@@ -59,8 +59,8 @@ class TerminalController(object):
         results = self.model.get_training_results()
         self.view.present_results(results)
 
-        # for surrogate_name in results.keys():
-        #     self.model.save_surrogate_model(surrogate_name)
+        for surrogate_name in results.keys():
+            self.model.save_surrogate_model(surrogate_name)
 
         # close the database
         self.model.close_db()

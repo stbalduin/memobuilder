@@ -22,6 +22,8 @@ class MeMoBuilderModel(object):
         # maps surrogate model name to training result objects
         self.training_results = {}
 
+        self.configs = None
+
     def open_db(self, h5_file,
                 access_mode=h5db.H5AccessMode.WRITE_TRUNCATE_ON_EXIST):
         self.db = memomodel.MeMoDB(h5_file)
@@ -162,10 +164,12 @@ class MeMoBuilderModel(object):
         self.db.save_object(model)
 
     def find_model_structure_by_surrogate_name(self, surrogate_name):
-        configs = self.db.load_objects(memomodel.SurrogateModelConfig)
-        config = [config
-                  for config in configs
-                  if config.name == surrogate_name][0]
+        if self.configs is None:
+            # Cache the configs
+            self.configs = self.db.load_objects(memomodel.SurrogateModelConfig)
+        config = [cfg
+                  for cfg in self.configs
+                  if cfg.name == surrogate_name][0]
         return config.sampler_configuration.model_structure
 
     def get_training_results(self):

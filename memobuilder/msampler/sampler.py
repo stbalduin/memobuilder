@@ -59,6 +59,6 @@ class Sampler(object):
 
             # udpate the sampling result
             sampling_result.update(current_sample, response)
-
+            # print(current_sample, response)
             current_assignments.clear()
         return sampling_result
